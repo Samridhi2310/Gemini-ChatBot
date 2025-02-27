@@ -93,7 +93,6 @@
 // // }
 
 // // export default DataRequest;
-
 "use client";
 import React, { useState, useTransition } from "react";
 import { IoSend } from "react-icons/io5";
@@ -101,32 +100,37 @@ import FetchData from "./FetchData";
 import ReactMarkdown from "react-markdown";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
-
 function DataRequest() {
   const [message, setMessage] = useState("");
-  const [response, setResponse] = useState("");
-  const [isPending, startTransition] = useTransition(); // useTransition hook
+  const [response, setResponse] = useState([]);
+  const [isPending, startTransition] = useTransition();
 
   function handleMessage(e) {
     setMessage(e.target.value);
   }
 
   function handleResponse() {
-    if (!message.trim() || isPending) return; // Prevent empty requests or multiple clicks
+    if (!message.trim() || isPending) return;
 
     startTransition(async () => {
-      setResponse("Generating response..."); // Simple text-based loading indicator
       const data = await FetchData({ message });
-      setResponse(String(data) || "No response received.");
+      setResponse((prev) => [...prev, { message, response: String(data) }]);
+      setMessage("");
     });
   }
-  
 
   return (
     <div className="flex flex-col items-center w-full p-4">
-      {/* Response Area */}
-      <div className="w-full max-w-md p-3 bg-gray-100 rounded-lg shadow-md mb-4 min-h-[50px]">
-        <ReactMarkdown>{response}</ReactMarkdown>
+       {/* Response Area */}
+       <div className="w-full max-w-md p-3 space-y-3">
+        {response.map((e, i) => (
+          <div key={i} className="p-3 bg-gray-100 rounded-lg shadow-md">
+            <h1 className="font-bold text-blue-600">{e.message}</h1>
+            <div className="mt-1 text-gray-700">
+              <ReactMarkdown>{e.response}</ReactMarkdown>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Input Field */}
@@ -141,24 +145,25 @@ function DataRequest() {
             onChange={handleMessage}
             onKeyDown={(e) => e.key === "Enter" && handleResponse()}
             disabled={isPending}
-          />{isPending?
-            (<AiOutlineLoading3Quarters className="animate-spin"/>):
-            (<IoSend
-                className={`text-black text-2xl ${
-                  message.trim() && !isPending ? "cursor-pointer" : "opacity-50 cursor-not-allowed"
-                }`}
-                onClick={handleResponse}
-              />)
-      
-        }
+          />
+          {isPending ? (
+            <AiOutlineLoading3Quarters className="animate-spin" />
+          ) : (
+            <IoSend
+              className={`text-black text-2xl ${
+                message.trim() ? "cursor-pointer" : "opacity-50 cursor-not-allowed"
+              }`}
+              onClick={handleResponse}
+            />
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-
 export default DataRequest;
+
 // "use client";
 // import React, { useState, useTransition, useRef, useEffect } from "react";
 // import { IoSend } from "react-icons/io5";
