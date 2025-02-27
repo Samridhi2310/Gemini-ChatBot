@@ -99,11 +99,14 @@ import { IoSend } from "react-icons/io5";
 import FetchData from "./FetchData";
 import ReactMarkdown from "react-markdown";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { FaEdit, FaSave } from "react-icons/fa";
 
 function DataRequest() {
   const [message, setMessage] = useState("");
   const [response, setResponse] = useState([]);
   const [isPending, startTransition] = useTransition();
+  const [editIndex, setEditIndex] = useState(null);
+  const [editMessage, setEditMessage] = useState("");
 
   function handleMessage(e) {
     setMessage(e.target.value);
@@ -119,13 +122,50 @@ function DataRequest() {
     });
   }
 
+  function handleEdit(index, message) {
+    setEditIndex(index);
+    setEditMessage(message);
+  }
+
+  async function handleSaveEdit(index) {
+    if (!editMessage.trim()) return;
+  
+    startTransition(async () => {
+      const newData = await FetchData({ message: editMessage }); // Fetch updated data
+      setResponse((prev) =>
+        prev.map((item, i) =>
+          i === index ? { message: editMessage, response: String(newData) } : item
+        )
+      );
+      setEditIndex(null);
+      setEditMessage("");
+    });
+  }
+  
+
   return (
-    <div className="flex flex-col items-center w-full p-4">
-       {/* Response Area */}
-       <div className="w-full max-w-md p-3 space-y-3">
+    <div className="flex flex-col items-center w-full p-4 ">
+      {/* Response Area */}
+      <div className="w-full max-w-md p-3 space-y-3">
         {response.map((e, i) => (
           <div key={i} className="p-3 bg-gray-100 rounded-lg shadow-md">
-            <h1 className="font-bold text-blue-600">{e.message}</h1>
+            <div className="flex flex-row items-center gap-2 flex-wrap">
+              {editIndex === i ? (
+                <input
+                  type="text"
+                  value={editMessage}
+                  onChange={(e) => setEditMessage(e.target.value)}
+                  className="border rounded p-1 flex-grow"
+                />
+              ) : (
+                <h1 className="font-bold text-blue-60">{e.message}</h1>
+              )}
+              {editIndex === i ? (
+                <FaSave onClick={() => handleSaveEdit(i)} className="cursor-pointer text-green-500" />
+              ) : (
+                <FaEdit onClick={() => handleEdit(i, e.message)} className="cursor-pointer text-gray-500" />
+              )}
+            </div>
             <div className="mt-1 text-gray-700">
               <ReactMarkdown>{e.response}</ReactMarkdown>
             </div>
@@ -163,6 +203,7 @@ function DataRequest() {
 }
 
 export default DataRequest;
+
 
 // "use client";
 // import React, { useState, useTransition, useRef, useEffect } from "react";
