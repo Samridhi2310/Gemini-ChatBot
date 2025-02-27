@@ -144,7 +144,7 @@ function DataRequest() {
   
 
   return (
-    <div className="flex flex-col items-center w-full p-4 ">
+    <div className="flex flex-col items-center w-full h-full p-4 ">
       {/* Response Area */}
       <div className="w-full max-w-md p-3 space-y-3">
         {response.map((e, i) => (
@@ -158,7 +158,7 @@ function DataRequest() {
                   className="border rounded p-1 flex-grow"
                 />
               ) : (
-                <h1 className="font-bold text-blue-60">{e.message}</h1>
+                <h1 className="font-bold text-blue-60 break-words overflow-hidden">{e.message}</h1>
               )}
               {editIndex === i ? (
                 <FaSave onClick={() => handleSaveEdit(i)} className="cursor-pointer text-green-500" />
