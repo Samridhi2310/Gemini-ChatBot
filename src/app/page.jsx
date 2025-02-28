@@ -3,7 +3,7 @@ import DataRequest from "./dataRequest";
 
 export default function Home() {
   return(
-   <div className="bg-[url(/chatbot.png)] bg-fixed min-h-screen ">
+   <div className="bg-[url(/chatbot.png)]  ">
     <DataRequest/>
    </div>
   );
