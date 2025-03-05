@@ -356,7 +356,6 @@ function DataRequest() {
   const [isPending, startTransition] = useTransition();
   const [editIndex, setEditIndex] = useState(null);
   const [editMessage, setEditMessage] = useState("");
-  
   // Reference to the latest message
   const latestMessageRef = useRef(null);
 
@@ -405,7 +404,7 @@ function DataRequest() {
     <>
       <div className="flex flex-col items-center w-full h-screen p-4 overflow-hidden">
         {/* Response Area */}
-        <div className="w-full max-w-md p-3 space-y-3 h-5/6 overflow-y-auto border-2">
+        <div className="w-full max-w-md p-3 space-y-3 h-5/6 overflow-y-auto border-2 scrollbar-hide">
           {response.map((e, i) => (
             <div
               key={i}
